@@ -1,0 +1,57 @@
+in record/file there is a field/ key of "payment_type" ,
+in record/file there is a field/ key of "refund_payment_type",
+
+in paymentMethods there is a key of "custrecord_ccs_mp_cp_payment_type_name",
+in paymentMethods there is a key of "custrecord_ccs_mp_cp_proc_company_name",
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+if the "payment_type" field comming from the record/file matches the "custrecord_ccs_mp_cp_payment_type_name" in the 
+paymentMethods then we want to fetch the "custrecord_ccs_ns_pay_method" value and set it in the key of 
+"replacemmentOrderPaymentMethod";
+
+
+if the "refund_payment_type" field comming from the record/file matches the "custrecord_ccs_mp_cp_proc_company_name" in the 
+paymentMethods then we want to fetch the "custrecord_ccs_ns_pay_method" value and set it in the key of 
+"rmaPaymentMethod";
+
+"rma_order_no" you will get this key value from the record/file inside "fileContent" then "rma_order_no"; 
+
+"isRmaCancellation" this key will be boolean if the record/file inside "fileContent" then "integration_status" has
+values of "update" and "delete" then this key will be "true" otherwise false; 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+now we have to maintain 3 list depending on the conditions:
+
+list 1 "rmaRecords" (this list will contains all the data coming from the record/file object , also includes the 
+"replacemmentOrderPaymentMethod" , "rmaPaymentMethod" , "rma_order_no" and  "isRmaCancellation" keys with their desired values).
+
+list 2 "rmaObjectsList" (this list will contain data coming from the record/file in which the "integration_status" has value of 
+"new" or null or when there is no "integration_status" field exits in the record. And also conation the 4 fields mentioned above
+"replacemmentOrderPaymentMethod" , "rmaPaymentMethod" , "rma_order_no" and  "isRmaCancellation" keys with their desired values).
+
+list 3 "rmaCancellationList" (this list will contain data coming from the record/file in which the "integration_status" has value of 
+"update" or "delete".And also conation the 4 fields mentioned above "replacemmentOrderPaymentMethod" , "rmaPaymentMethod" , 
+"rma_order_no" and  "isRmaCancellation" keys with their desired values).
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+now this is the desired output object that we are looking for:
+
+
+{
+            rmaRecords,
+            rmaObjectsList,
+            rmaCancellationPayload : {
+                isValid: rmaCancellationList.length ? true : false,
+                rmaCancellationList
+            }
+}
+
+
+
+
+
+
